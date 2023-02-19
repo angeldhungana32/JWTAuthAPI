@@ -1,4 +1,4 @@
-﻿namespace JWTAuthAPI.DTOs.UserAccount
+﻿namespace JWTAuthAPI.Entities.DTOs.UserAccount
 {
     public class UserCreateRequest
     {

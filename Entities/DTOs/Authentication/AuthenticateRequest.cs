@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JWTAuthAPI.DTOs.Authentication
+namespace JWTAuthAPI.Entities.DTOs.Authentication
 {
     public class AuthenticateRequest
     {

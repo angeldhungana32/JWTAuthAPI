@@ -1,6 +1,6 @@
 ﻿using JWTAuthAPI.Entities.Identity;
 
-namespace JWTAuthAPI.DTOs.Authentication
+namespace JWTAuthAPI.Entities.DTOs.Authentication
 {
     public class AuthenticateResponse
     {

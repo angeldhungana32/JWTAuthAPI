@@ -1,7 +1,6 @@
-﻿using JWTAuthAPI.DTOs.Authentication;
-using JWTAuthAPI.Entities.Identity;
+﻿using JWTAuthAPI.Entities.Identity;
 
-namespace JWTAuthAPI.DTOs.UserAccount
+namespace JWTAuthAPI.Entities.DTOs.UserAccount
 {
     public static class UserMappings
     {
