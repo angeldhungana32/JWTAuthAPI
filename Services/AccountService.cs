@@ -1,27 +1,33 @@
-﻿using JWTAuthAPI.Entities.DTOs.Authentication;
+﻿using JWTAuthAPI.Authorization;
+using JWTAuthAPI.Entities.DTOs.Authentication;
 using JWTAuthAPI.Entities.DTOs.UserAccount;
 using JWTAuthAPI.Entities.Identity;
 using JWTAuthAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace JWTAuthAPI.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthorizationService _authorizationService;
 
         public AccountService(UserManager<ApplicationUser> userManager, 
-            ITokenService tokenService) 
+            ITokenService tokenService,
+            IAuthorizationService authorizationService) 
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _authorizationService = authorizationService;
         }
 
         public async Task<ApplicationUser?> AddUserAsync(ApplicationUser entity,
             string password)
         {
-            _ = await _userManager.CreateAsync(entity, password);
+            await _userManager.CreateAsync(entity, password);
             var validUser = await _userManager.FindByEmailAsync(entity.Email);
             return validUser;
         }
@@ -59,6 +65,17 @@ namespace JWTAuthAPI.Services
         {
             var result = await _userManager.UpdateAsync(entity);
             return result.Succeeded;
+        }
+
+        public async Task<bool> AuthorizeOwnerAsync(ClaimsPrincipal userContext,
+            ApplicationUser resource)
+        {
+            var authorized = await _authorizationService
+                .AuthorizeAsync(userContext, 
+                    resource,
+                    new UserIsOwnerRequirement());
+
+            return authorized.Succeeded;
         }
     }
 }

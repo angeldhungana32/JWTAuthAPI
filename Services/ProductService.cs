@@ -1,7 +1,11 @@
-﻿using JWTAuthAPI.Entities;
+﻿using JWTAuthAPI.Authorization;
+using JWTAuthAPI.Entities;
+using JWTAuthAPI.Entities.Identity;
 using JWTAuthAPI.Helpers;
 using JWTAuthAPI.Interfaces;
 using JWTAuthAPI.Specification;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace JWTAuthAPI.Services
 {
@@ -9,10 +13,12 @@ namespace JWTAuthAPI.Services
     {
 
         private readonly IRepositoryActivator _repositoryActivator;
+        private readonly IAccountService _accountService;
 
-        public ProductService(IRepositoryActivator repositoryActivator)
+        public ProductService(IRepositoryActivator repositoryActivator, IAccountService accountService)
         {
             _repositoryActivator = repositoryActivator;
+            _accountService = accountService;
         }
 
         public async Task<Product> AddProductAsync(Product product)
@@ -50,6 +56,15 @@ namespace JWTAuthAPI.Services
             return await _repositoryActivator
                 .Repository<Product>()
                 .UpdateAsync(product);
+        }
+
+        public async Task<bool> AuthorizeProductOwnerAsync(ClaimsPrincipal userContext, Product resource)
+        {
+            var user = await _accountService.GetUserByIdAsync(resource.UserId.ToString());
+
+            if(user == null) { return false; }
+
+            return await _accountService.AuthorizeOwnerAsync(userContext, user);
         }
     }
 }

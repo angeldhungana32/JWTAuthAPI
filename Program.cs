@@ -1,4 +1,5 @@
 using FluentValidation;
+using JWTAuthAPI.Authorization;
 using JWTAuthAPI.Extensions;
 using JWTAuthAPI.Infrastructure.Data;
 using JWTAuthAPI.Infrastructure.Repositories;
@@ -6,6 +7,7 @@ using JWTAuthAPI.Interfaces;
 using JWTAuthAPI.Middlewares;
 using JWTAuthAPI.Services;
 using JWTAuthAPI.Validations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +32,7 @@ builder.Services.AddScoped<ITokenService,   JwtTokenService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddTransient<IRepositoryActivator, RepositoryActivator>();
+builder.Services.AddScoped<IAuthorizationHandler, UserIsOwnerAuthorizationHandler>();
 
 
 var app = builder.Build();

@@ -31,10 +31,10 @@ namespace JWTAuthAPI.Controllers.v1
         public async Task<IActionResult> AddProductAsync([FromBody] ProductCreateRequest request)
         {
             var validationResult = await _createValidator.ValidateAsync(request);
-            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+            if (!validationResult.IsValid) { return BadRequest(validationResult.ToString()); }
 
             var product = await _productService.AddProductAsync(request.ToEntity());
-            if (product == null) return BadRequest();
+            if (product == null) { return BadRequest(); }
 
             return Created(string.Format("/Products/{0}", product.Id), product.ToResponseDTO());
         }
@@ -46,7 +46,7 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductAsync(string id)
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var product = await _productService.GetProductByIdAsync(id);
             return product == null ? NotFound() : Ok(product);
@@ -59,14 +59,15 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateProductAsync(string id, [FromBody] ProductUpdateRequest request)
         {
-            if(string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var validationResult = await _updateValidator.ValidateAsync(request);
-            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+            if (!validationResult.IsValid) { return BadRequest(validationResult.ToString()); }
 
             var product = await _productService.GetProductByIdAsync(id);
 
-            if (product == null) return NotFound();
+            if (product == null) { return NotFound(); }
+            if(!await _productService.AuthorizeProductOwnerAsync(User, product)) { return NotFound(); }
 
             var succeeded = await _productService.UpdateProductAsync(product.UpdateEntity(request));
 
@@ -82,11 +83,12 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteProductAsync(string id)
         {
-            if(string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var product = await _productService.GetProductByIdAsync(id);
 
-            if (product == null) return NotFound();
+            if (product == null) { return NotFound(); }
+            if (!await _productService.AuthorizeProductOwnerAsync(User, product)) { return NotFound(); }
 
             var succeeded = await _productService.DeleteProductAsync(product);
 
@@ -101,11 +103,10 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(List<ProductResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductsByUserIdAsync(string id)
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var products = await _productService.ListAllProductsByUserIdAsync(id);
             return products == null ? NotFound() : Ok(products);
         }
-
     }
 }

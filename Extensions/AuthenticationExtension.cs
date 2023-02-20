@@ -21,6 +21,7 @@ namespace JWTAuthAPI.Extensions
                     options.Password.RequiredLength = 8;
                     options.Password.RequireNonAlphanumeric = true;
                     options.Password.RequireUppercase = true;
+                    options.SignIn.RequireConfirmedEmail = false;
                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1d);
                     options.Lockout.MaxFailedAccessAttempts = 5;
                 })

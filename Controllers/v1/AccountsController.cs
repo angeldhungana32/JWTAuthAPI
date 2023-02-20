@@ -15,7 +15,7 @@ namespace JWTAuthAPI.Controllers.v1
         private readonly IValidator<UserCreateRequest> _createValidator;
         private readonly IValidator<AuthenticateRequest> _authenticateValidator;
 
-        public AccountsController(IAccountService accountService, 
+        public AccountsController(IAccountService accountService,
             IValidator<UserUpdateRequest> updateValidator, 
             IValidator<UserCreateRequest> createValidator,
             IValidator<AuthenticateRequest> authenticateValidator)
@@ -34,7 +34,7 @@ namespace JWTAuthAPI.Controllers.v1
         public async Task<IActionResult> LoginAsync([FromBody] AuthenticateRequest authenticateRequest)
         {
             var validationResult = await _authenticateValidator.ValidateAsync(authenticateRequest);
-            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+            if (!validationResult.IsValid) { return BadRequest(validationResult.ToString()); }
 
             var user = await _accountService.AuthenticateUserAsync(authenticateRequest);
             return user == null ? BadRequest() : Ok(user);
@@ -48,10 +48,10 @@ namespace JWTAuthAPI.Controllers.v1
         public async Task<IActionResult> RegisterAsync([FromBody] UserCreateRequest request)
         {
             var validationResult = await _createValidator.ValidateAsync(request);
-            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+            if (!validationResult.IsValid) { return BadRequest(validationResult.ToString()); }
 
             var user = await _accountService.AddUserAsync(request.ToEntity(), request.Password);
-            return user == null ? BadRequest() : Created(string.Format("/User/{0}", user.Id), user.ToResponseDTO());
+            return user == null ? BadRequest() : Created(string.Format("api/v1/Accounts/Users/{0}", user.Id), user.ToResponseDTO());
         }
 
         // GET api/v1/Accounts/Users/id
@@ -61,9 +61,10 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserAsync(string id)
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var user = await _accountService.GetUserByIdAsync(id);
+
             return user == null ? NotFound() : Ok(user);
         }
 
@@ -74,14 +75,15 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] UserUpdateRequest request)
         {
-            if(string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var validationResult = await _updateValidator.ValidateAsync(request);
-            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+            if (!validationResult.IsValid) { return BadRequest(validationResult.ToString()); }
 
             var user = await _accountService.GetUserByIdAsync(id);
 
-            if (user == null) return NotFound();
+            if (user == null) { return NotFound(); }
+            if (!await _accountService.AuthorizeOwnerAsync(User, user)) { return Forbid(); }
 
             var succeeded = await _accountService.UpdateUserAsync(user.UpdateEntity(request));
 
@@ -97,11 +99,12 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUserAsync(string id)
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var user = await _accountService.GetUserByIdAsync(id);
 
-            if (user == null) return NotFound();
+            if (user == null) { return NotFound(); }
+            if (!await _accountService.AuthorizeOwnerAsync(User, user)) { return Forbid(); }
 
             var succeeded = await _accountService.DeleteUserAsync(user);
 
@@ -109,6 +112,5 @@ namespace JWTAuthAPI.Controllers.v1
 
             return NoContent();
         }
-
     }
 }

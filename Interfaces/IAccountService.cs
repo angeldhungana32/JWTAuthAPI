@@ -1,5 +1,6 @@
 ﻿using JWTAuthAPI.Entities.DTOs.Authentication;
 using JWTAuthAPI.Entities.Identity;
+using System.Security.Claims;
 
 namespace JWTAuthAPI.Interfaces
 {
@@ -10,5 +11,6 @@ namespace JWTAuthAPI.Interfaces
         Task<bool> UpdateUserAsync(ApplicationUser entity);
         Task<bool> DeleteUserAsync(ApplicationUser entity);
         Task<AuthenticateResponse?> AuthenticateUserAsync(AuthenticateRequest request);
+        Task<bool> AuthorizeOwnerAsync(ClaimsPrincipal userContext, ApplicationUser resource);
     }
 }

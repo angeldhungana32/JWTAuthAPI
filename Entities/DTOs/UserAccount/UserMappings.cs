@@ -1,5 +1,4 @@
-﻿using JWTAuthAPI.Entities.DTOs.Product;
-using JWTAuthAPI.Entities.Identity;
+﻿using JWTAuthAPI.Entities.Identity;
 
 namespace JWTAuthAPI.Entities.DTOs.UserAccount
 {
