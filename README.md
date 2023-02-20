@@ -9,6 +9,7 @@ Leveraging the power of ASP.NET Core, this simple project features an example of
 * Service/Repository/Controller pattern: Uses the Service/Repository/Controller pattern to improve code organization and maintainability.
 * Authorization Handler: Forbid users who are not owners from modifying resources to improve data security.
 * Database: Currently using InMemoryDatabase, but you can easily swap with the DBMS of your choice.
+* FluentValidation : Uses the fluent validators for request model validation
 
 ## Usage
 This API provides the following endpoints:
