@@ -15,7 +15,7 @@
         // Products
         public const string AddProduct = "";
         public const string GetProduct = "{id}";
-        public const string GetAllProductsByUserId = "/Users/{id}";
+        public const string GetAllProductsByUserId = "Users/{id}";
         public const string UpdateProduct = "{id}";
         public const string DeleteProduct = "{id}";
     }

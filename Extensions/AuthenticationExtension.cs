@@ -1,5 +1,8 @@
 ﻿using JWTAuthAPI.Configuration;
+using JWTAuthAPI.Entities.Identity;
+using JWTAuthAPI.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -11,9 +14,24 @@ namespace JWTAuthAPI.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.Configure<JwtConfiguration>(configuration.GetSection("JwtConfig"));
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>
+                (options =>
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequireUppercase = true;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1d);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                })
+                .AddRoles<ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+
+            services.Configure<JwtConfiguration>(configuration.GetSection("Jwt"));
+            var jwtConfiguration = configuration.GetSection("Jwt").Get<JwtConfiguration>();
             
-            var jwtConfiguration = configuration.GetSection("JwtConfig").Get<JwtConfiguration>();
             byte[] key = Encoding.UTF8.GetBytes(jwtConfiguration.SecretKey);
 
             services.AddAuthentication(options =>
