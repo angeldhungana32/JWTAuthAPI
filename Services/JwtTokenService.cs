@@ -32,10 +32,8 @@ namespace JWTAuthAPI.Services
                     new Claim(JwtRegisteredClaimNames.Aud, _jwtConfiguration.Audience),
                     new Claim(JwtRegisteredClaimNames.Iss, _jwtConfiguration.Issuer)
                 }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature),
+                Expires = DateTime.UtcNow.AddHours(_jwtConfiguration.Expiration),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _jwtConfiguration.Audience,
                 Issuer = _jwtConfiguration.Issuer
             };

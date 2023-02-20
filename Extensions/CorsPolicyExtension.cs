@@ -3,6 +3,7 @@
     public static class CorsPolicyExtension
     {
         private static readonly string MyAllowSpecificOrigins = "MyCorsPolicy";
+
         public static IServiceCollection AddCorsPolicy(this IServiceCollection services)
         {
             services.AddCors(options =>

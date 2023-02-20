@@ -5,8 +5,7 @@ namespace JWTAuthAPI.Infrastructure.Repositories
 {
     public class SpecificationEvaluator<T> where T : class
     {
-        public static IQueryable<T> GetQuery(IQueryable<T> _query, 
-            ISpecification<T> specification)
+        public static IQueryable<T> GetQuery(IQueryable<T> _query, ISpecification<T> specification)
         {
             var query = _query;
 
@@ -15,14 +14,10 @@ namespace JWTAuthAPI.Infrastructure.Repositories
                 query = query.Where(specification.Criteria);
             }
 
-            query = specification
-                .Includes
-                .Aggregate(query,(current, include) => 
+            query = specification.Includes.Aggregate(query,(current, include) => 
                     current.Include(include));
 
-            query = specification
-                .IncludeStrings
-                .Aggregate(query,(current, include) => 
+            query = specification.IncludeStrings.Aggregate(query,(current, include) => 
                     current.Include(include));
 
             if (specification.OrderBy != null)

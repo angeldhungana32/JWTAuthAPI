@@ -6,12 +6,12 @@ namespace JWTAuthAPI.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
-        public ExceptionMiddleware(RequestDelegate next, 
-            ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _logger = logger;
             _next = next;
         }
+
         public async Task InvokeAsync(HttpContext httpContext)
         {
             try
@@ -24,6 +24,7 @@ namespace JWTAuthAPI.Middlewares
                 await HandleExceptionAsync(httpContext);
             }
         }
+
         private static async Task HandleExceptionAsync(HttpContext context)
         {
             context.Response.ContentType = "application/json";
@@ -32,7 +33,8 @@ namespace JWTAuthAPI.Middlewares
             {
                 StatusCode = context.Response.StatusCode,
                 Message = "Internal Server Error"
-            }.ToString());
+            }
+            .ToString());
         }
     }
 }

@@ -17,7 +17,6 @@ namespace JWTAuthAPI.Validations
                .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
                .Matches(@"[\!\?\*\.]+").WithMessage("Your password must contain at least one (!? *.).");
 
-
             RuleFor(v => v.Email)
                 .NotNull()
                 .NotEmpty()

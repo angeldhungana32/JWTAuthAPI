@@ -20,10 +20,12 @@ namespace JWTAuthAPI.Specification
         {
             Includes.Add(includeExpression);
         }
+
         protected virtual void AddInclude(string includeString)
         {
             IncludeStrings.Add(includeString);
         }
+
         protected virtual void ApplyOrderBy(Expression<Func<T, object>> orderByExpression)
         {
             OrderBy = orderByExpression;

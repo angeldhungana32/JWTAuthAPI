@@ -15,8 +15,7 @@ namespace JWTAuthAPI.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
 
-        public AccountService(UserManager<ApplicationUser> userManager, 
-            ITokenService tokenService,
+        public AccountService(UserManager<ApplicationUser> userManager, ITokenService tokenService,
             IAuthorizationService authorizationService) 
         {
             _userManager = userManager;
@@ -24,8 +23,7 @@ namespace JWTAuthAPI.Services
             _authorizationService = authorizationService;
         }
 
-        public async Task<ApplicationUser?> AddUserAsync(ApplicationUser entity,
-            string password)
+        public async Task<ApplicationUser?> AddUserAsync(ApplicationUser entity, string password)
         {
             await _userManager.CreateAsync(entity, password);
             var validUser = await _userManager.FindByEmailAsync(entity.Email);
@@ -39,7 +37,6 @@ namespace JWTAuthAPI.Services
             if (user != null)
             {
                 var isValidUser = await _userManager.CheckPasswordAsync(user, request.Password);
-
                 if (isValidUser)
                 {
                     string token = _tokenService.GenerateAuthenticationToken(user);
@@ -67,8 +64,7 @@ namespace JWTAuthAPI.Services
             return result.Succeeded;
         }
 
-        public async Task<bool> AuthorizeOwnerAsync(ClaimsPrincipal userContext,
-            ApplicationUser resource)
+        public async Task<bool> AuthorizeOwnerAsync(ClaimsPrincipal userContext, ApplicationUser resource)
         {
             var authorized = await _authorizationService.AuthorizeAsync(userContext, resource,
                     new UserIsOwnerRequirement());

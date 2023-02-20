@@ -10,25 +10,20 @@ namespace JWTAuthAPI.Extensions
 {
     public static class AuthenticationExtension
     {
-        public static IServiceCollection AddJwtAuthentication(
-            this IServiceCollection services,
-            IConfiguration configuration)
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-
-            services.AddIdentity<ApplicationUser, ApplicationRole>
-                (options =>
-                {
-                    options.Password.RequiredLength = 8;
-                    options.Password.RequireNonAlphanumeric = true;
-                    options.Password.RequireUppercase = true;
-                    options.SignIn.RequireConfirmedEmail = false;
-                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1d);
-                    options.Lockout.MaxFailedAccessAttempts = 5;
-                })
-                .AddRoles<ApplicationRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.SignIn.RequireConfirmedEmail = false;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1d);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+            })
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             services.Configure<JwtConfiguration>(configuration.GetSection("Jwt"));
             var jwtConfiguration = configuration.GetSection("Jwt").Get<JwtConfiguration>();

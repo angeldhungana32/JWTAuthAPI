@@ -1,7 +1,6 @@
 ﻿using JWTAuthAPI.Infrastructure.Data;
 using JWTAuthAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace JWTAuthAPI.Infrastructure.Repositories
 {
@@ -34,9 +33,7 @@ namespace JWTAuthAPI.Infrastructure.Repositories
 
         public async Task<T> GetByIdAsync(Guid id)
         {
-            return await _dbContext
-                .Set<T>()
-                .FindAsync(new object[] { id });
+            return await _dbContext.Set<T>().FindAsync(new object[] { id });
         }
 
         public async Task<IReadOnlyList<T>> ListAllAsync(ISpecification<T> specification)

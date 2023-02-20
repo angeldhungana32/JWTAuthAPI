@@ -28,12 +28,7 @@ namespace JWTAuthAPI.Infrastructure.Repositories
             if (!_repositories.ContainsKey(type))
             {
                 var repoType = typeof(Repository<>);
-
-                var repoInstance = Activator
-                    .CreateInstance(repoType.MakeGenericType(typeof(T)), 
-                        _dbContext);
-
-
+                var repoInstance = Activator.CreateInstance(repoType.MakeGenericType(typeof(T)), _dbContext);
                 _repositories.Add(type, repoInstance);
             }
 
