@@ -17,10 +17,7 @@ namespace JWTAuthAPI.Authorization
                                    UserIsOwnerRequirement requirement,
                                    ApplicationUser resource)
         {
-            if (context.User == null || resource == null)
-            {
-                return Task.CompletedTask;
-            }
+            if (context.User == null || resource == null) { return Task.CompletedTask; }
 
             if (resource.Id.ToString() == _userManager.GetUserId(context.User))
             {

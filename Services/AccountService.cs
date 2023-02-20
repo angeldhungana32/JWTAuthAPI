@@ -70,9 +70,7 @@ namespace JWTAuthAPI.Services
         public async Task<bool> AuthorizeOwnerAsync(ClaimsPrincipal userContext,
             ApplicationUser resource)
         {
-            var authorized = await _authorizationService
-                .AuthorizeAsync(userContext, 
-                    resource,
+            var authorized = await _authorizationService.AuthorizeAsync(userContext, resource,
                     new UserIsOwnerRequirement());
 
             return authorized.Succeeded;

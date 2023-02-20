@@ -1,10 +1,7 @@
-﻿using JWTAuthAPI.Authorization;
-using JWTAuthAPI.Entities;
-using JWTAuthAPI.Entities.Identity;
+﻿using JWTAuthAPI.Entities;
 using JWTAuthAPI.Helpers;
 using JWTAuthAPI.Interfaces;
 using JWTAuthAPI.Specification;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace JWTAuthAPI.Services
