@@ -19,6 +19,21 @@ namespace JWTAuthAPI.Entities.DTOs.Product
             };
         }
 
+        public static List<ProductResponse> ToResponseDTO(this IReadOnlyCollection<Entities.Product> products)
+        {
+            List<ProductResponse> productsResponse = new();
+
+            if (products != null)
+            {
+                foreach (var product in products)
+                {
+                    productsResponse.Add(ToResponseDTO(product));
+                }
+            }
+
+            return productsResponse;
+        }
+
         public static Entities.Product ToEntity(this ProductCreateRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));

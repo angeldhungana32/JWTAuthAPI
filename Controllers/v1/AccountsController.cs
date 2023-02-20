@@ -65,7 +65,7 @@ namespace JWTAuthAPI.Controllers.v1
 
             var user = await _accountService.GetUserByIdAsync(id);
 
-            return user == null ? NotFound() : Ok(user);
+            return user == null ? NotFound() : Ok(user.ToResponseDTO());
         }
 
         // PUT api/v1/Accounts/Users/id

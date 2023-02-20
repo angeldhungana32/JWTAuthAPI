@@ -49,7 +49,7 @@ namespace JWTAuthAPI.Controllers.v1
             if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var product = await _productService.GetProductByIdAsync(id);
-            return product == null ? NotFound() : Ok(product);
+            return product == null ? NotFound() : Ok(product.ToResponseDTO());
         }
 
         // PUT api/v1/Products/id
@@ -106,7 +106,7 @@ namespace JWTAuthAPI.Controllers.v1
             if (string.IsNullOrEmpty(id)) { return BadRequest(); }
 
             var products = await _productService.ListAllProductsByUserIdAsync(id);
-            return products == null ? NotFound() : Ok(products);
+            return products == null ? NotFound() : Ok(products.ToResponseDTO());
         }
     }
 }

@@ -10,7 +10,7 @@ namespace JWTAuthAPI.Validations
             RuleFor(v => v.Name)
                  .NotNull()
                  .NotEmpty()
-                 .MinimumLength(100);
+                 .MaximumLength(100);
 
             RuleFor(v => v.Price)
                 .GreaterThanOrEqualTo(0);

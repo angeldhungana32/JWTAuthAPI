@@ -27,12 +27,17 @@ namespace JWTAuthAPI.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Aud, _jwtConfiguration.Audience),
+                    new Claim(JwtRegisteredClaimNames.Iss, _jwtConfiguration.Issuer)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                    SecurityAlgorithms.HmacSha256Signature),
+                Audience = _jwtConfiguration.Audience,
+                Issuer = _jwtConfiguration.Issuer
             };
 
             var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
