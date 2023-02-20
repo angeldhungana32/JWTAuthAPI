@@ -1,10 +1,9 @@
-﻿using JWTAuthAPI.Entities;
+﻿using FluentValidation;
 using JWTAuthAPI.Entities.DTOs.Authentication;
 using JWTAuthAPI.Entities.DTOs.Product;
+using JWTAuthAPI.Entities.DTOs.UserAccount;
 using JWTAuthAPI.Helpers;
-using JWTAuthAPI.Infrastructure.Repositories;
 using JWTAuthAPI.Interfaces;
-using JWTAuthAPI.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +12,15 @@ namespace JWTAuthAPI.Controllers.v1
     public class ProductsController : V1BaseController
     {
         private readonly IProductService _productService;
-        public ProductsController(IProductService productService)
+        private readonly IValidator<ProductUpdateRequest> _updateValidator;
+        private readonly IValidator<ProductCreateRequest> _createValidator;
+        public ProductsController(IProductService productService, 
+            IValidator<ProductUpdateRequest> updateValidator,
+            IValidator<ProductCreateRequest> createValidator)
         {
             _productService = productService;
+            _updateValidator = updateValidator;
+            _createValidator = createValidator;
         }
 
         // POST api/v1/Products
@@ -25,6 +30,9 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddProductAsync([FromBody] ProductCreateRequest request)
         {
+            var validationResult = await _createValidator.ValidateAsync(request);
+            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+
             var product = await _productService.AddProductAsync(request.ToEntity());
             if (product == null)
             {
@@ -41,7 +49,7 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductAsync(string id)
         {
-            if (id == null) return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
             var product = await _productService.GetProductByIdAsync(id);
             return product == null ? NotFound() : Ok(product);
@@ -54,7 +62,10 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateProductAsync(string id, [FromBody] ProductUpdateRequest request)
         {
-            if(string.IsNullOrEmpty(id)) return BadRequest();  
+            if(string.IsNullOrEmpty(id)) return BadRequest();
+
+            var validationResult = await _updateValidator.ValidateAsync(request);
+            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
 
             var product = await _productService.GetProductByIdAsync(id);
 
@@ -93,7 +104,7 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(List<ProductResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductsByUserIdAsync(string id)
         {
-            if (id == null) return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
             var products = await _productService.ListAllProductsByUserIdAsync(id);
             return products == null ? NotFound() : Ok(products);

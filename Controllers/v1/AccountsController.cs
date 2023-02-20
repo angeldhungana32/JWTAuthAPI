@@ -1,4 +1,5 @@
-﻿using JWTAuthAPI.Entities.DTOs.Authentication;
+﻿using FluentValidation;
+using JWTAuthAPI.Entities.DTOs.Authentication;
 using JWTAuthAPI.Entities.DTOs.UserAccount;
 using JWTAuthAPI.Helpers;
 using JWTAuthAPI.Interfaces;
@@ -10,9 +11,19 @@ namespace JWTAuthAPI.Controllers.v1
     public class AccountsController : V1BaseController
     {
         private readonly IAccountService _accountService;
-        public AccountsController(IAccountService accountService)
+        private readonly IValidator<UserUpdateRequest> _updateValidator;
+        private readonly IValidator<UserCreateRequest> _createValidator;
+        private readonly IValidator<AuthenticateRequest> _authenticateValidator;
+
+        public AccountsController(IAccountService accountService, 
+            IValidator<UserUpdateRequest> updateValidator, 
+            IValidator<UserCreateRequest> createValidator,
+            IValidator<AuthenticateRequest> authenticateValidator)
         {
             _accountService = accountService;
+            _updateValidator = updateValidator;
+            _createValidator = createValidator;
+            _authenticateValidator = authenticateValidator;
         }
 
         // POST api/v1/Accounts/Login
@@ -22,6 +33,9 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(AuthenticateResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginAsync([FromBody] AuthenticateRequest authenticateRequest)
         {
+            var validationResult = await _authenticateValidator.ValidateAsync(authenticateRequest);
+            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
+
             var user = await _accountService.AuthenticateUserAsync(authenticateRequest);
             return user == null ? BadRequest() : Ok(user);
         }
@@ -33,13 +47,11 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> RegisterAsync([FromBody] UserCreateRequest request)
         {
-            var user = await _accountService.AddUserAsync(request.ToEntity(), request.Password);
-            if (user == null)
-            {
-                return BadRequest();
-            }
+            var validationResult = await _createValidator.ValidateAsync(request);
+            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
 
-            return Created(string.Format("/User/{0}", user.Id), user.ToResponseDTO());
+            var user = await _accountService.AddUserAsync(request.ToEntity(), request.Password);
+            return user == null ? BadRequest() : Created(string.Format("/User/{0}", user.Id), user.ToResponseDTO());
         }
 
         // GET api/v1/Accounts/Users/id
@@ -49,7 +61,7 @@ namespace JWTAuthAPI.Controllers.v1
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserAsync(string id)
         {
-            if (id == null) return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
             var user = await _accountService.GetUserByIdAsync(id);
             return user == null ? NotFound() : Ok(user);
@@ -63,6 +75,9 @@ namespace JWTAuthAPI.Controllers.v1
         public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] UserUpdateRequest request)
         {
             if(string.IsNullOrEmpty(id)) return BadRequest();
+
+            var validationResult = await _updateValidator.ValidateAsync(request);
+            if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
 
             var user = await _accountService.GetUserByIdAsync(id);
 
