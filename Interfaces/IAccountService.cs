@@ -5,15 +5,10 @@ namespace JWTAuthAPI.Interfaces
 {
     public interface IAccountService
     {
-        Task<ApplicationUser> GetUserByIdAsync(string id,
-            CancellationToken cancellationToken = default);
-        Task<ApplicationUser> AddUserAsync(ApplicationUser entity,
-            CancellationToken cancellationToken = default);
-        Task UpdateUserAsync(ApplicationUser entity,
-            CancellationToken cancellationToken = default);
-        Task DeleteUserAsync(string id,
-            CancellationToken cancellationToken = default);
-        Task<AuthenticateResponse> AuthenticateUserAsync(AuthenticateRequest request,
-            CancellationToken cancellationToken = default);
+        Task<ApplicationUser?> GetUserByIdAsync(string id);
+        Task<ApplicationUser?> AddUserAsync(ApplicationUser entity, string password);
+        Task<bool> UpdateUserAsync(ApplicationUser entity);
+        Task<bool> DeleteUserAsync(string id);
+        Task<AuthenticateResponse?> AuthenticateUserAsync(AuthenticateRequest request);
     }
 }
