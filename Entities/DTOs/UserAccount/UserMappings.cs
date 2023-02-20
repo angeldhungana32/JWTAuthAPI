@@ -1,4 +1,5 @@
-﻿using JWTAuthAPI.Entities.Identity;
+﻿using JWTAuthAPI.Entities.DTOs.Product;
+using JWTAuthAPI.Entities.Identity;
 
 namespace JWTAuthAPI.Entities.DTOs.UserAccount
 {
@@ -28,6 +29,21 @@ namespace JWTAuthAPI.Entities.DTOs.UserAccount
                 Email = request.Email,
                 UserName = request.Email
             };
+        }
+
+        public static ApplicationUser UpdateEntity(this ApplicationUser user,
+            UserUpdateRequest request)
+        {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+
+            if (request != null)
+            {
+                user.FirstName = request.FirstName ?? user.FirstName;
+                user.LastName = request.LastName ?? user.LastName;
+            }
+
+            return user;
+
         }
     }
 }

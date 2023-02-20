@@ -8,6 +8,6 @@ namespace JWTAuthAPI.Interfaces
         Task<IReadOnlyList<Product>> ListAllProductsByUserIdAsync(string id);
         Task<Product> AddProductAsync(Product entity);
         Task<bool> UpdateProductAsync(Product entity);
-        Task<bool> DeleteProductAsync(string id);
+        Task<bool> DeleteProductAsync(Product entity);
     }
 }

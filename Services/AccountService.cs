@@ -44,17 +44,10 @@ namespace JWTAuthAPI.Services
             return default;
         }
 
-        public async Task<bool> DeleteUserAsync(string id)
+        public async Task<bool> DeleteUserAsync(ApplicationUser user)
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if(user != null)
-            {
-                var result = await _userManager.DeleteAsync(user);
-                return result.Succeeded;
-            }
-
-            return false;
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
         }
 
         public async Task<ApplicationUser?> GetUserByIdAsync(string id)

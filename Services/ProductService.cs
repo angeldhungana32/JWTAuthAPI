@@ -15,23 +15,18 @@ namespace JWTAuthAPI.Services
             _repositoryActivator = repositoryActivator;
         }
 
-        public async Task<Product> AddProductAsync(Product entity)
+        public async Task<Product> AddProductAsync(Product product)
         {
             return await _repositoryActivator
                 .Repository<Product>()
-                .AddAsync(entity);
+                .AddAsync(product);
         }
 
-        public async Task<bool> DeleteProductAsync(string id)
+        public async Task<bool> DeleteProductAsync(Product product)
         {
-            var entity = await GetProductByIdAsync(id);
-            if(entity != null)
-            {
-                return await _repositoryActivator
+            return await _repositoryActivator
                     .Repository<Product>()
-                    .DeleteAsync(entity);
-            }
-            return false;
+                    .DeleteAsync(product);
         }
 
         public async Task<Product> GetProductByIdAsync(string id)
@@ -50,11 +45,11 @@ namespace JWTAuthAPI.Services
                 .ListAllAsync(new ProductsByUserId(guid));
         }
 
-        public async Task<bool> UpdateProductAsync(Product entity)
+        public async Task<bool> UpdateProductAsync(Product product)
         {
             return await _repositoryActivator
                 .Repository<Product>()
-                .UpdateAsync(entity);
+                .UpdateAsync(product);
         }
     }
 }
