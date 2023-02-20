@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using JWTAuthAPI.Entities.DTOs.Authentication;
 using JWTAuthAPI.Entities.DTOs.UserAccount;
 
 namespace JWTAuthAPI.Validations
