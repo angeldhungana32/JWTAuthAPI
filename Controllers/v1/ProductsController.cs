@@ -34,10 +34,7 @@ namespace JWTAuthAPI.Controllers.v1
             if (!validationResult.IsValid) return BadRequest(validationResult.ToString());
 
             var product = await _productService.AddProductAsync(request.ToEntity());
-            if (product == null)
-            {
-                return BadRequest();
-            }
+            if (product == null) return BadRequest();
 
             return Created(string.Format("/Products/{0}", product.Id), product.ToResponseDTO());
         }
